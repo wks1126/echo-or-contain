@@ -5,8 +5,11 @@ type: software
 authors:
   - family-names: "Wang"
     given-names: "Ke Song"
+    affiliation: "Northeastern University, Shenyang, Liaoning, China"
+    orcid: "https://orcid.org/0009-0004-6555-6744"
   - family-names: "Chen"
     given-names: "Shu Yuan"
+    affiliation: "Zhejiang Ocean University, Zhoushan, Zhejiang, China"
 year: 2026
 version: "1.0.0"
 license: CC-BY-4.0
