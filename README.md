@@ -76,5 +76,6 @@ Code and derived data are released under CC BY 4.0 (see `LICENSE.md`). The under
 remain the property of their publishers and are subject to their own terms; this archive
 redistributes only the question and answer text needed to verify the analysis.
 
-If you use this package, please cite the article (citation details and the repository DOI are in
-`CITATION.cff`) and the embedding models as credited above.
+If you use this package, please cite the article (citation details and the repository URL, release
+v1.0.0, are in `CITATION.cff`; the package is published at
+<https://github.com/wks1126/echo-or-contain>) and the embedding models as credited above.
