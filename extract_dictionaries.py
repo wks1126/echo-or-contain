@@ -16,6 +16,8 @@ import sys
 sys.stdout.reconfigure(encoding='utf-8')
 HERE = os.path.dirname(os.path.abspath(__file__))
 CODE = os.path.join(HERE, 'code')
+if not os.path.isdir(CODE):
+    CODE = HERE          # 库内为平铺布局（脚本与 build_all.py / features.py 同目录）
 
 # 来自 build_all.py：中国指向 / 中文媒体 / 涉华敏感议题 / 问责式提问
 BUILD_NAMES = {
@@ -24,8 +26,13 @@ BUILD_NAMES = {
     'SENS': 'sensitive —— 涉华争议议题词典',
     'ACC': 'acc —— 问责式提问框架词典',
 }
-# 来自 features.py：拒答/回避套语
-FEATURE_LISTS = {'AVOID': 'avoid —— 拒答/回避套语词典'}
+# 口径溯源：features_all.json 的 avoid 列由 build_all.py 里的 AVOID 正则生成，
+# 因此 AVOID 必须从 build_all.py 抽（早期 features.py 里的 AVOID 列表口径不同，仅作遗留留档）。
+BUILD_NAMES['AVOID'] = 'avoid —— 拒答/回避套语词典（生成 features_all.json 的正式口径）'
+# 早期 features.py 里的拒答词表（口径与 features_all.json 不同）留档，注明勿用于复现
+LEGACY = {'AVOID_legacy_features_py':
+          ('features.py', 'AVOID',
+           '⚠ 早期 features.py 拒答词表：口径与 features_all.json 不同，勿用于复现')}
 
 
 def consts_from_assigns(path, want):
@@ -50,14 +57,15 @@ def consts_from_assigns(path, want):
 
 dicts = {}
 b = consts_from_assigns(os.path.join(CODE, 'build_all.py'), set(BUILD_NAMES))
-f = consts_from_assigns(os.path.join(CODE, 'features.py'), set(FEATURE_LISTS))
 for k, v in b.items():
     dicts[k] = {'role': BUILD_NAMES[k], 'source': 'code/build_all.py',
                 'type': 'regex', 'pattern': v,
                 'items': sorted(set(re.findall(r'[^()|\\]+', v)))}
-for k, v in f.items():
-    dicts[k] = {'role': FEATURE_LISTS[k], 'source': 'code/features.py',
-                'type': 'literal list', 'items': v}
+for out_key, (src_file, var, role) in LEGACY.items():
+    got = consts_from_assigns(os.path.join(CODE, src_file), {var})
+    if var in got:
+        dicts[out_key] = {'role': role, 'source': 'code/' + src_file,
+                          'type': 'literal list', 'items': got[var]}
 
 with open(os.path.join(HERE, 'dictionaries.json'), 'w', encoding='utf-8') as fh:
     json.dump(dicts, fh, ensure_ascii=False, indent=1)
